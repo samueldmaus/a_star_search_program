@@ -16,7 +16,11 @@ vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 {0, 0, 0, 0, 1, 0}};
 */
 
-enum class State {kNothing, kObstacle, kClosed, kPath};
+// enum class to track our path
+enum class State {kNothing, kObstacle, kClosed, kPath, kStart, kFinish};
+
+// 2D array to set the directions you can go from current node
+const int delta[4][2] = {{-1, 0}, {1, 0}, {0, 1}, {0, -1}};
 
 // function to compare f values of nodes
 bool Compare(vector<int> a, vector<int> b)
@@ -33,7 +37,7 @@ void CellSort(vector<vector<int> > *v)
 }
 
 // Heuristic function to determine how far away a point is from the finish
-int Heuristic(int x_1, int x_2, int y_1, int y_2)
+int Heuristic(int x_1, int y_1, int x_2, int y_2)
 {
     return (abs(x_2 - x_1) + abs(y_2 - y_1));
 }
@@ -66,7 +70,7 @@ void AddToOpen(int x, int y, int g, int h, vector<vector<int> > &open_list, vect
 }
 
 // parse through each line of the .txt file
-vector<State> ParseLine(string &line)
+vector<State> ParseLine(string line)
 {
     // make each line into a string
     istringstream i_line(line);
@@ -116,14 +120,15 @@ vector<vector<State> >ReadBoardFile(string &file)
 }
 
 // function to determing what to pring based on enum State
-string CellString(State &cell)
+string CellString(State cell)
 {
-    if(cell == State::kObstacle)
-    {
-        return "⛰️   ";
-    }else
-    {
-        return "0 ";
+    // switch statement to set the path, start, finish, and obstacles
+    switch(cell){
+        case State::kObstacle: return "⛰️ ";
+        case State::kPath: return "🚗 ";
+        case State::kStart: return "🚦 ";
+        case State::kFinish: return "🏁 ";
+        default: return "0 ";
     }
     
 }
@@ -141,6 +146,29 @@ void PrintTheBoard(vector<vector<State> > &v)
     }
 }
 
+// expand neighbors functions to try out surrounding nodes
+void ExpandNeighbors(const vector<int> &c_node, vector<vector<int> > &open_list, vector<vector<State> > &grid, int end[2])
+{
+    int x = c_node[0];
+    int y = c_node[1];
+    int g = c_node[2];
+
+    // loop through current node's potential neighbors
+    for(int i = 0; i < 4; i++)
+    {
+        int x2 = x + delta[i][0];
+        int y2 = y + delta[i][1];
+
+        // check that neighbor is on the grid and not an obstacle
+        if(CheckValidCell(x2, y2, grid))
+        {
+            int g2 = g + 1;
+            int h2 = Heuristic(x2, y2, end[0], end[1]);
+            AddToOpen(x2, y2, g2, h2, open_list, grid);
+        }
+    }
+}
+
 // search function to search through board and return the solution
 vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int end[2])
 {
@@ -151,6 +179,24 @@ vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int en
     int g = 0;
     int h = Heuristic(x, y, end[0], end[1]);
     AddToOpen(x, y, g, h, open_list, grid);
+    while(!open_list.empty())
+    {
+        CellSort(&open_list);
+        vector<int> c_node = open_list.back();
+        open_list.pop_back();
+        int c_x = c_node[0];
+        int c_y = c_node[1];
+        grid[c_x][c_y] = State::kPath;
+
+        // check to see if we reached to goal
+        if(c_x == end[0] && c_y == end[1])
+        {
+            return grid;
+        }
+
+        // if we're done, then expand search to current node's neighbors
+        ExpandNeighbors(c_node, open_list, grid, end);
+    }
     cout << "Oh no, there isn't a path to the end" << endl;
     return vector<vector<State> > {};
 }
