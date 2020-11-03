@@ -206,10 +206,16 @@ vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int en
 // main function
 int main()
 {
-    int start[2] = {0, 0};
-    int end[2] = {4, 5};
+    int start[2];
+    int end[2];
     string path = "./examplemaze.txt";
     vector<vector<State> > board = ReadBoardFile(path);
+    cout << "Give starting node (top left is (0, 0)): " << endl;
+    cin >> start[0] >> start[1];
+    cout << "Give ending node(bottom right is (" << board.size()-1 << ", " << board[0].size()-1 << "):" << endl;
+    cin >> end[0] >> end[1];
+    cout << "Starting from: (" << start[0] << ", " << start[1] << ")" << endl;
+    cout << "Ending at: (" << end[0] << ", " << end[1] <<  ")" << endl;
     auto solution_path = Search(board, start, end);
     PrintTheBoard(solution_path);
 }
