@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <fstream>
+#include <sstream>
 
 using namespace std;
 
@@ -13,16 +14,42 @@ vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 {0, 0, 0, 0, 1, 0}};
 */
 
-void ReadBoardFile(string file)
+// parse through each line of the .txt file
+vector<int> ParseLine(string &line)
 {
-    string line;
-    ifstream the_board(file);
-    while(getline(the_board, line))
+    istringstream i_line(line);
+    int n; char c; vector<int> p_vector;
+    while(i_line >> n >> c && c == ',')
     {
-        cout << line << endl;
+        p_vector.push_back(n);
     }
+    return p_vector;
+
 }
 
+// print the contents from the .txt file
+vector<vector<int> >ReadBoardFile(string &file)
+{
+    // string variable for the each lin & vector<vector<int>> var for the board
+    string line;
+    vector<vector<int> > parsed_vector;
+
+    // ifstream to take in the .txt file
+    ifstream the_board(file);
+
+    // if to make sure fstream worked; push_back each line into the parsed vector
+    if(the_board)
+    {
+        while(getline(the_board, line))
+        {
+            parsed_vector.push_back(ParseLine(line));
+        }
+    }
+
+    return parsed_vector;
+}
+
+// print the board to the console
 void PrintTheBoard(vector<vector<int> > &v)
 {
     for(vector<int> i : v)
@@ -38,6 +65,7 @@ void PrintTheBoard(vector<vector<int> > &v)
 int main()
 {
     string path = "./examplemaze.txt";
-    ReadBoardFile(path);
+    vector<vector<int> > board = ReadBoardFile(path);
+    PrintTheBoard(board);
 }
 
