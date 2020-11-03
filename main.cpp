@@ -92,10 +92,20 @@ void PrintTheBoard(vector<vector<State> > &v)
     }
 }
 
+// search function to search through board and return the solution
+vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int end[2])
+{
+    cout << "Oh no, there isn't a path to the end" << endl;
+    return vector<vector<State> > {};
+}
+
 int main()
 {
+    int start[2] = {0, 0};
+    int end[2] = {4, 5};
     string path = "./examplemaze.txt";
     vector<vector<State> > board = ReadBoardFile(path);
-    PrintTheBoard(board);
+    auto solution_path = Search(board, start, end);
+    PrintTheBoard(solution_path);
 }
 
