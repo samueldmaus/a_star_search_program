@@ -14,25 +14,41 @@ vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 {0, 0, 0, 0, 1, 0}};
 */
 
+enum class State {kNothing, kObstacle};
+
 // parse through each line of the .txt file
-vector<int> ParseLine(string &line)
+vector<State> ParseLine(string &line)
 {
+    // make each line into a string
     istringstream i_line(line);
-    int n; char c; vector<int> p_vector;
+
+    // declare variables
+    int n; char c; vector<State> p_vector;
+
+    // while the line is structure int then char and the char is (comma), push the line into the p_vector
     while(i_line >> n >> c && c == ',')
     {
-        p_vector.push_back(n);
+        // now uses enum to set the 1's equal to State::kObstacle and the 0's each to kNothing
+        if(n == 1)
+        {
+            p_vector.push_back(State::kObstacle);
+        }else
+        {
+            p_vector.push_back(State::kNothing);
+        }
+        
     }
+
     return p_vector;
 
 }
 
 // print the contents from the .txt file
-vector<vector<int> >ReadBoardFile(string &file)
+vector<vector<State> >ReadBoardFile(string &file)
 {
     // string variable for the each lin & vector<vector<int>> var for the board
     string line;
-    vector<vector<int> > parsed_vector;
+    vector<vector<State> > parsed_vector;
 
     // ifstream to take in the .txt file
     ifstream the_board(file);
@@ -42,6 +58,7 @@ vector<vector<int> >ReadBoardFile(string &file)
     {
         while(getline(the_board, line))
         {
+            // push each p_vector from ParseLine into the parsed_vector 
             parsed_vector.push_back(ParseLine(line));
         }
     }
@@ -49,14 +66,27 @@ vector<vector<int> >ReadBoardFile(string &file)
     return parsed_vector;
 }
 
-// print the board to the console
-void PrintTheBoard(vector<vector<int> > &v)
+// function to determing what to pring based on enum State
+string CellString(State &cell)
 {
-    for(vector<int> i : v)
+    if(cell == State::kObstacle)
     {
-        for(int j : i)
+        return "⛰️   ";
+    }else
+    {
+        return "0 ";
+    }
+    
+}
+
+// print the board to the console
+void PrintTheBoard(vector<vector<State> > &v)
+{
+    for(vector<State> i : v)
+    {
+        for(State j : i)
         {
-            cout << j;
+            cout << CellString(j);
         }
         cout << endl;
     }
@@ -65,7 +95,7 @@ void PrintTheBoard(vector<vector<int> > &v)
 int main()
 {
     string path = "./examplemaze.txt";
-    vector<vector<int> > board = ReadBoardFile(path);
+    vector<vector<State> > board = ReadBoardFile(path);
     PrintTheBoard(board);
 }
 
