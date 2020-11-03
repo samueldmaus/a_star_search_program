@@ -17,6 +17,14 @@ vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 
 enum class State {kNothing, kObstacle, kClosed};
 
+// function to compare f values of nodes
+bool Compare(vector<int> a, vector<int> b)
+{
+    int f1 = a[2] + a[3];
+    int f2 = b[2] + b[3];
+    return f1 > f2;
+}
+
 // Heuristic function to determine how far away a point is from the finish
 int Heuristic(int x_1, int x_2, int y_1, int y_2)
 {
@@ -112,10 +120,17 @@ void PrintTheBoard(vector<vector<State> > &v)
 // search function to search through board and return the solution
 vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int end[2])
 {
+    vector<vector<int> > open_list{};
+    int x = start[0];
+    int y = start[1];
+    int g = 0;
+    int h = Heuristic(x, y, end[0], end[1]);
+    AddToOpen(x, y, g, h, open_list, grid);
     cout << "Oh no, there isn't a path to the end" << endl;
     return vector<vector<State> > {};
 }
 
+// main function
 int main()
 {
     int start[2] = {0, 0};
