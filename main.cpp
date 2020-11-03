@@ -4,6 +4,7 @@
 #include <fstream>
 #include <sstream>
 #include <numeric>
+#include <algorithm>
 
 using namespace std;
 
@@ -15,7 +16,7 @@ vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 {0, 0, 0, 0, 1, 0}};
 */
 
-enum class State {kNothing, kObstacle, kClosed};
+enum class State {kNothing, kObstacle, kClosed, kPath};
 
 // function to compare f values of nodes
 bool Compare(vector<int> a, vector<int> b)
@@ -25,10 +26,33 @@ bool Compare(vector<int> a, vector<int> b)
     return f1 > f2;
 }
 
+// function to sort the cells
+void CellSort(vector<vector<int> > *v)
+{
+    sort(v->begin(), v->end(), Compare); //-> deferences the pointer
+}
+
 // Heuristic function to determine how far away a point is from the finish
 int Heuristic(int x_1, int x_2, int y_1, int y_2)
 {
     return (abs(x_2 - x_1) + abs(y_2 - y_1));
+}
+
+// function to check that neighboring node is on the grid and not an obstacle
+bool CheckValidCell(int x, int y, vector<vector<State> > &grid)
+{
+    // check that x is on the grid
+    bool on_grid_x = (x >= 0 && x < grid.size());
+
+    // check that y is on the grid
+    bool on_grid_y = (y >= 0 && y < grid[0].size());
+
+    // if both x & y are on the grid, set that node to kNothing
+    if(on_grid_x && on_grid_y)
+    {
+        return grid[x][y] == State::kNothing;
+    }
+    return false;
 }
 
 // function to add nodes to the open vector
@@ -120,6 +144,7 @@ void PrintTheBoard(vector<vector<State> > &v)
 // search function to search through board and return the solution
 vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int end[2])
 {
+    // create the vector of open nodes & set starting node information
     vector<vector<int> > open_list{};
     int x = start[0];
     int y = start[1];
