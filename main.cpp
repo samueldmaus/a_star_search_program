@@ -5,11 +5,23 @@
 
 using namespace std;
 
+/* moved to .txt file
 vector<vector<int> > board = {{0, 1, 0, 0, 0, 0},
 {0, 1, 0, 0, 0, 0},
 {0, 1, 0, 0, 0, 0},
 {0, 1, 0, 0, 0, 0},
 {0, 0, 0, 0, 1, 0}};
+*/
+
+void ReadBoardFile(string file)
+{
+    string line;
+    ifstream the_board(file);
+    while(getline(the_board, line))
+    {
+        cout << line << endl;
+    }
+}
 
 void PrintTheBoard(vector<vector<int> > &v)
 {
@@ -25,6 +37,7 @@ void PrintTheBoard(vector<vector<int> > &v)
 
 int main()
 {
-    PrintTheBoard(board);
+    string path = "./examplemaze.txt";
+    ReadBoardFile(path);
 }
 
