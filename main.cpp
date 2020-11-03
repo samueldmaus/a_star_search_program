@@ -124,11 +124,11 @@ string CellString(State cell)
 {
     // switch statement to set the path, start, finish, and obstacles
     switch(cell){
-        case State::kObstacle: return "⛰️ ";
-        case State::kPath: return "🚗 ";
-        case State::kStart: return "🚦 ";
-        case State::kFinish: return "🏁 ";
-        default: return "0 ";
+        case State::kObstacle: return " ⛰️ ";
+        case State::kPath: return " 🚗 ";
+        case State::kStart: return " 🚦 ";
+        case State::kFinish: return " 🏁 ";
+        default: return "  0 ";
     }
     
 }
@@ -191,6 +191,8 @@ vector<vector<State> > Search(vector<vector<State> > &grid, int start[2], int en
         // check to see if we reached to goal
         if(c_x == end[0] && c_y == end[1])
         {
+            grid[start[0]][start[1]] = State::kStart;
+            grid[end[0]][end[1]] = State::kFinish;
             return grid;
         }
 
